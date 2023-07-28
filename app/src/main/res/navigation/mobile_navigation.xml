@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_contacts">
+
+    <fragment
+        android:id="@+id/nav_contacts"
+        android:name="com.example.contactsbook.ui.contacts.ContactsFragment"
+        android:label="@string/menu_contacts"
+        tools:layout="@layout/fragment_contacts" />
+
+    <fragment
+        android:id="@+id/nav_call_logs"
+        android:name="com.example.contactsbook.ui.calls.CallsFragment"
+        android:label="@string/menu_calls"
+        tools:layout="@layout/fragment_calls" />
+
+    <fragment
+        android:id="@+id/nav_sms_inbox"
+        android:name="com.example.contactsbook.ui.sms.SmsInboxFragment"
+        android:label="@string/menu_sms_inbox"
+        tools:layout="@layout/fragment_sms_inbox" />
+</navigation>

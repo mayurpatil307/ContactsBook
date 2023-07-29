@@ -2,15 +2,14 @@ package com.example.contactsbook.ui.sms
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.contactsbook.databinding.ItemSmsInboxBinding
 import com.example.contactsbook.models.SMSMessage
-import com.example.contactsbook.ui.sms.placeholder.PlaceholderContent.PlaceholderItem
 
-class SmsListAdapter : ListAdapter<SMSMessage, SmsListAdapter.ViewHolder>(SmsMessageDiffCallback()) {
+class SmsListAdapter :
+    ListAdapter<SMSMessage, SmsListAdapter.ViewHolder>(SmsMessageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -27,11 +26,12 @@ class SmsListAdapter : ListAdapter<SMSMessage, SmsListAdapter.ViewHolder>(SmsMes
         holder.bind(item)
     }
 
-    inner class ViewHolder(private val binding: ItemSmsInboxBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemSmsInboxBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SMSMessage) {
-            binding.itemNumber.text = item.sender
-            binding.content.text = item.body
+            binding.smsSenderTextView.text = item.sender
+            binding.smsBodyTextView.text = item.body
         }
     }
 

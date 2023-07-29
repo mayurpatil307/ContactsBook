@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private val smsPermission = Manifest.permission.READ_SMS
     private val contactPermission = Manifest.permission.READ_CONTACTS
+    private val callLogsPermission = Manifest.permission.READ_CALL_LOG
 
     private val sharedPrefs by lazy {
         getSharedPreferences("last_visited", Context.MODE_PRIVATE)
@@ -93,6 +94,10 @@ class MainActivity : AppCompatActivity() {
         }
         if (!isPermissionIsGranted(contactPermission)) {
             permissionsToRequest.add(contactPermission)
+        }
+
+        if (!isPermissionIsGranted(callLogsPermission)) {
+            permissionsToRequest.add(callLogsPermission)
         }
 
         if (permissionsToRequest.isNotEmpty()) {

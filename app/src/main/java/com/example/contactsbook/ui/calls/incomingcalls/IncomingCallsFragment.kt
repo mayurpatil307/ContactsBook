@@ -9,11 +9,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsbook.databinding.FragmentIncomingCallsListBinding
-import com.example.contactsbook.databinding.FragmentSmsInboxListBinding
-import com.example.contactsbook.ui.sms.SmsViewModel
 
 class IncomingCallsFragment : Fragment() {
 

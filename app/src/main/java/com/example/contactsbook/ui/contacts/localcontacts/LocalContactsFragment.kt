@@ -17,8 +17,10 @@ import com.example.contactsbook.MainActivity
 import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentLocalContactsListBinding
+import com.example.contactsbook.dialogs.ContactActionDialogFragment
 import com.example.contactsbook.extensions.isPermissionIsGranted
 import com.example.contactsbook.extensions.registerRequestLauncher
+import com.example.contactsbook.models.Contact
 import com.example.contactsbook.ui.contacts.localcontacts.placeholder.PlaceholderContent
 class LocalContactsFragment : Fragment() {
     private lateinit var viewModel: ContactsViewModel
@@ -41,6 +43,9 @@ class LocalContactsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         contactsListAdapter = ContactsListAdapter(mutableListOf())
+        contactsListAdapter.onItemClick = { contact ->
+            showContactActionDialog(contact)
+        }
 
         binding.list.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -65,4 +70,12 @@ class LocalContactsFragment : Fragment() {
             }
         }
     }
+
+    private fun showContactActionDialog(contact: Contact) {
+        val contactName = contact.name
+        val contactNumber = contact.phoneNumber
+        val dialogFragment = ContactActionDialogFragment.newInstance(contactName, contactNumber)
+        dialogFragment.show(parentFragmentManager, "contact_action_dialog")
+    }
+
 }

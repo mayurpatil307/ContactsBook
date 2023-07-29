@@ -11,6 +11,8 @@ import com.example.contactsbook.models.Contact
 class ContactsListAdapter(private var values: MutableList<Contact>) :
     RecyclerView.Adapter<ContactsListAdapter.ViewHolder>() {
 
+    var onItemClick: ((Contact) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             ItemContactBinding.inflate(
@@ -50,6 +52,10 @@ class ContactsListAdapter(private var values: MutableList<Contact>) :
 
             if (item.photoUri != null) {
                 binding.contactImageView.load(Uri.parse(item.photoUri))
+            }
+
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
             }
         }
     }

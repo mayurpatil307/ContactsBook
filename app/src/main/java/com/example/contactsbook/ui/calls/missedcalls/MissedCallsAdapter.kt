@@ -2,43 +2,45 @@ package com.example.contactsbook.ui.calls.missedcalls
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.contactsbook.databinding.ItemMissedCallsBinding
-import com.example.contactsbook.ui.calls.missedcalls.placeholder.PlaceholderContent.PlaceholderItem
+import com.example.contactsbook.R
+import com.example.contactsbook.databinding.ItemIncomingCallBinding
+import com.example.contactsbook.models.CallLogItem
 
-class MissedCallsAdapter(
-    private val values: List<PlaceholderItem>
-) : RecyclerView.Adapter<MissedCallsAdapter.ViewHolder>() {
+
+class MissedCallsAdapter :
+    ListAdapter<CallLogItem, MissedCallsAdapter.ViewHolder>(MissedCallsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-        return ViewHolder(
-            ItemMissedCallsBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
-
+        val binding =
+            ItemIncomingCallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        holder.idView.text = item.id
-        holder.contentView.text = item.content
+        val item = getItem(position)
+        holder.bind(item)
     }
 
-    override fun getItemCount(): Int = values.size
-
-    inner class ViewHolder(binding: ItemMissedCallsBinding) :
+    inner class ViewHolder(private val binding: ItemIncomingCallBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
 
-        override fun toString(): String {
-            return super.toString() + " '" + contentView.text + "'"
+        fun bind(item: CallLogItem) {
+            binding.callerNameTextView.text = item.callerName ?: "Unknown"
+            binding.callerNumberTextView.text = item.callerNumber
+            binding.callTypeImageView.setImageResource(R.drawable.ic_missed_call)
         }
     }
 
+    class MissedCallsDiffCallback : DiffUtil.ItemCallback<CallLogItem>() {
+        override fun areItemsTheSame(oldItem: CallLogItem, newItem: CallLogItem): Boolean {
+            return oldItem.callerNumber == newItem.callerNumber
+        }
+
+        override fun areContentsTheSame(oldItem: CallLogItem, newItem: CallLogItem): Boolean {
+            return oldItem == newItem
+        }
+    }
 }

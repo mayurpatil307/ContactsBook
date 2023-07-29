@@ -15,7 +15,7 @@ import com.example.contactsbook.databinding.FragmentOutgoingCallsListBinding
 class OutgoingCallsFragment : Fragment() {
 
     private lateinit var binding: FragmentOutgoingCallsListBinding
-    private lateinit var outgoingCallsListAdapter: OutgoingCallsListAdapter
+    private lateinit var outgoingCallsAdapter: OutgoingCallsAdapter
     private val viewModel: OutgoingCallsViewModel by viewModels()
 
     override fun onCreateView(
@@ -29,15 +29,15 @@ class OutgoingCallsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        outgoingCallsListAdapter = OutgoingCallsListAdapter()
+        outgoingCallsAdapter = OutgoingCallsAdapter()
 
         binding.list.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = outgoingCallsListAdapter
+            adapter = outgoingCallsAdapter
         }
 
-        viewModel.outgoingCallsList.observe(viewLifecycleOwner) { incomingCalls ->
-            outgoingCallsListAdapter.submitList(incomingCalls.toMutableList())
+        viewModel.outgoingCallsList.observe(viewLifecycleOwner) { outgoingCalls ->
+            outgoingCallsAdapter.submitList(outgoingCalls.toMutableList())
         }
 
         if (ContextCompat.checkSelfPermission(

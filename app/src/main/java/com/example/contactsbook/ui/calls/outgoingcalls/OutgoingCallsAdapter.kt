@@ -9,8 +9,8 @@ import com.example.contactsbook.R
 import com.example.contactsbook.databinding.ItemIncomingCallBinding
 import com.example.contactsbook.models.CallLogItem
 
-class OutgoingCallsListAdapter :
-    ListAdapter<CallLogItem, OutgoingCallsListAdapter.ViewHolder>(IncomingCallsDiffCallback()) {
+class OutgoingCallsAdapter :
+    ListAdapter<CallLogItem, OutgoingCallsAdapter.ViewHolder>(IncomingCallsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =

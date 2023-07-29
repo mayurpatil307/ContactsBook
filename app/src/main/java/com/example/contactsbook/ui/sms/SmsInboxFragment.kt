@@ -4,31 +4,52 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.contactsbook.R
-import com.example.contactsbook.ui.sms.placeholder.PlaceholderContent
+import com.example.contactsbook.MainActivity
+import com.example.contactsbook.databinding.FragmentSmsInboxListBinding
 
 class SmsInboxFragment : Fragment() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var viewModel: SmsViewModel
+    private lateinit var smsListAdapter: SmsListAdapter
+    private lateinit var binding: FragmentSmsInboxListBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_sms_inbox_list, container, false)
+    ): View {
+        viewModel = ViewModelProvider(this).get(SmsViewModel::class.java)
+        binding = FragmentSmsInboxListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = LinearLayoutManager(context)
-                adapter = SmsListAdapter(PlaceholderContent.ITEMS)
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        smsListAdapter = SmsListAdapter()
+
+        val isReadSmsAllowed = (activity as MainActivity).isSmsPermGranted
+
+        binding.rvSmsInbox.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = smsListAdapter
         }
-        return view
+
+        viewModel.smsList.observe(viewLifecycleOwner) { messages ->
+            smsListAdapter.submitList(messages)
+        }
+
+        if (isReadSmsAllowed == true) {
+            viewModel.loadSMSMessages()
+        } else {
+            Toast.makeText(
+                requireActivity(),
+                "Read Permissions for SMS has not been granted by the user.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
     }
 }

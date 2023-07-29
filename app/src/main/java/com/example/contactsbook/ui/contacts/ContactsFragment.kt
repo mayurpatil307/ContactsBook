@@ -16,7 +16,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 class ContactsFragment : Fragment() {
 
     private var _binding: FragmentContactsBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.contactsbook.databinding.ItemSmsInboxBinding
 import com.example.contactsbook.models.SMSMessage
 
-class SmsListAdapter :
+class SmsListAdapter(private val smsItemClickListener: SmsItemClickListener) :
     ListAdapter<SMSMessage, SmsListAdapter.ViewHolder>(SmsMessageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,6 +32,10 @@ class SmsListAdapter :
         fun bind(item: SMSMessage) {
             binding.smsSenderTextView.text = item.sender
             binding.smsBodyTextView.text = item.body
+
+            binding.root.setOnClickListener {
+                smsItemClickListener.onSmsItemClick(item)
+            }
         }
     }
 

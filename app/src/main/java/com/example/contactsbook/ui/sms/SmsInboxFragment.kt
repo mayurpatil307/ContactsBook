@@ -1,17 +1,23 @@
 package com.example.contactsbook.ui.sms
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsbook.MainActivity
+import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentSmsInboxListBinding
+import com.example.contactsbook.extensions.toPresentableTime
+import com.example.contactsbook.models.SMSMessage
 
-class SmsInboxFragment : Fragment() {
+class SmsInboxFragment : Fragment(), SmsItemClickListener {
     private lateinit var viewModel: SmsViewModel
     private lateinit var smsListAdapter: SmsListAdapter
     private lateinit var binding: FragmentSmsInboxListBinding
@@ -28,7 +34,7 @@ class SmsInboxFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        smsListAdapter = SmsListAdapter()
+        smsListAdapter = SmsListAdapter(this)
 
         val isReadSmsAllowed = (activity as MainActivity).isSmsPermGranted
 
@@ -51,5 +57,28 @@ class SmsInboxFragment : Fragment() {
             ).show()
         }
 
+    }
+
+    override fun onSmsItemClick(item: SMSMessage) {
+        showSmsDetailDialog(item.sender, item.body, item.timestamp)
+    }
+
+    private fun showSmsDetailDialog(sender: String, body: String, time: Long) {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.sms_dialog, null)
+
+        dialogView.findViewById<TextView>(R.id.dialogSenderTextView).text = sender
+        dialogView.findViewById<TextView>(R.id.dialogBodyTextView).text = body
+        dialogView.findViewById<TextView>(R.id.timeTextView).text = time.toPresentableTime()
+
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        dialogView.findViewById<Button>(R.id.dialogCloseButton).setOnClickListener {
+            dialogBuilder.dismiss()
+        }
+
+        dialogBuilder.show()
     }
 }

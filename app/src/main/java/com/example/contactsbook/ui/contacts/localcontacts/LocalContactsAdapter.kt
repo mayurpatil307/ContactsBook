@@ -1,44 +1,56 @@
 package com.example.contactsbook.ui.contacts.localcontacts
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.contactsbook.databinding.ItemLocalContactsBinding
-import com.example.contactsbook.ui.contacts.localcontacts.placeholder.PlaceholderContent.PlaceholderItem
+import coil.load
+import com.example.contactsbook.databinding.ItemContactBinding
+import com.example.contactsbook.models.Contact
 
-class LocalContactsAdapter(
-    private val values: List<PlaceholderItem>
-) : RecyclerView.Adapter<LocalContactsAdapter.ViewHolder>() {
+class ContactsListAdapter(private var values: MutableList<Contact>) :
+    RecyclerView.Adapter<ContactsListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder(
-            ItemLocalContactsBinding.inflate(
+            ItemContactBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             )
         )
-
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        holder.idView.text = item.id
-        holder.contentView.text = item.content
     }
 
     override fun getItemCount(): Int = values.size
 
-    inner class ViewHolder(binding: ItemLocalContactsBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
-
-        override fun toString(): String {
-            return super.toString() + " '" + contentView.text + "'"
-        }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = values[position]
+        holder.bind(item)
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+    fun updateData(newData: MutableList<Contact>) {
+        values.clear()
+        values = newData
+        notifyDataSetChanged()
+    }
+
+    inner class ViewHolder(private val binding: ItemContactBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: Contact) {
+            binding.contactNameTextView.text = item.name
+            binding.contactNumberTextView.text = item.phoneNumber
+
+            if (item.photoUri != null) {
+                binding.contactImageView.load(Uri.parse(item.photoUri))
+            }
+        }
+    }
 }

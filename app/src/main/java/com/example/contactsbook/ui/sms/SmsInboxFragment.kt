@@ -1,7 +1,10 @@
 package com.example.contactsbook.ui.sms
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsbook.MainActivity
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentSmsInboxListBinding
+import com.example.contactsbook.extensions.isPermissionIsGranted
 import com.example.contactsbook.extensions.toPresentableTime
 import com.example.contactsbook.models.SMSMessage
 
@@ -36,7 +40,7 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         smsListAdapter = SmsListAdapter(this)
 
-        val isReadSmsAllowed = (activity as MainActivity).isSmsPermGranted
+        val isReadSmsAllowed = (activity as MainActivity).isPermissionIsGranted(Manifest.permission.READ_SMS)
 
         binding.rvSmsInbox.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -47,7 +51,7 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
             smsListAdapter.submitList(messages)
         }
 
-        if (isReadSmsAllowed == true) {
+        if (isReadSmsAllowed) {
             viewModel.loadSMSMessages()
         } else {
             Toast.makeText(
@@ -57,6 +61,13 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
             ).show()
         }
 
+        saveLastVisitedItemId(R.id.nav_sms_inbox)
+    }
+
+    private fun saveLastVisitedItemId(itemId: Int) {
+        val sharedPrefs = requireActivity().getSharedPreferences("last_visited", Context.MODE_PRIVATE)
+        sharedPrefs.edit().putInt("last_visited_item_id", itemId).apply()
+        Log.d("TAGGU", "nav_sms_inbox: $itemId")
     }
 
     override fun onSmsItemClick(item: SMSMessage) {
@@ -81,4 +92,5 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
 
         dialogBuilder.show()
     }
+
 }

@@ -1,12 +1,15 @@
 package com.example.contactsbook.ui.contacts
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentContactsBinding
 import com.example.contactsbook.ui.common.ViewPagerAdapter
 import com.example.contactsbook.ui.contacts.googlecontacts.GoogleContactsFragment
@@ -35,6 +38,7 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setViewPagerAdapter()
+        saveLastVisitedItemId(R.id.nav_contacts)
     }
 
     private fun setViewPagerAdapter() {
@@ -64,6 +68,12 @@ class ContactsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun saveLastVisitedItemId(itemId: Int) {
+        val sharedPrefs = requireActivity().getSharedPreferences("last_visited", Context.MODE_PRIVATE)
+        sharedPrefs.edit().putInt("last_visited_item_id", itemId).apply()
+        Log.d("TAGGU", "saving contacts: $itemId")
     }
 
     companion object {

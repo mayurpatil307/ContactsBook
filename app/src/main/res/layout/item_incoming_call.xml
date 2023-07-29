@@ -27,6 +27,7 @@
             android:text="John Doe"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:paddingBottom="4dp"/>
 
         <TextView

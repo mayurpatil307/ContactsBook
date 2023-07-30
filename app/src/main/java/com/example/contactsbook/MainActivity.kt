@@ -6,24 +6,23 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.example.contactsbook.databinding.ActivityMainBinding
 import com.example.contactsbook.extensions.isPermissionIsGranted
-import com.example.contactsbook.extensions.registerRequestLauncher
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(){
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -32,10 +31,6 @@ class MainActivity : AppCompatActivity() {
     private val smsPermission = Manifest.permission.READ_SMS
     private val contactPermission = Manifest.permission.READ_CONTACTS
     private val callLogsPermission = Manifest.permission.READ_CALL_LOG
-
-    private val sharedPrefs by lazy {
-        getSharedPreferences("last_visited", Context.MODE_PRIVATE)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +55,10 @@ class MainActivity : AppCompatActivity() {
         val lastVisitedItemId = getLastVisitedItemId()
         if (lastVisitedItemId != R.id.nav_contacts) {
             navController.navigate(lastVisitedItemId)
-            Log.d("TAGGU", "not contacts: $lastVisitedItemId")
         } else {
             //default -> contacts
             navController.navigate(R.id.nav_contacts)
-            Log.d("TAGGU", "contacts: $lastVisitedItemId")
         }
-        Log.d("TAGGU", "nav_sms_inbox: $lastVisitedItemId")
 
         requestPermissions()
     }
@@ -74,12 +66,6 @@ class MainActivity : AppCompatActivity() {
     private fun getLastVisitedItemId(): Int {
         val sharedPrefs = getSharedPreferences("last_visited", Context.MODE_PRIVATE)
         return sharedPrefs.getInt("last_visited_item_id", R.id.nav_contacts)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -118,7 +104,11 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             for (result in grantResults) {
                 if (result == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Closing the app, since the permissions are necessary.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Closing the app, since the permissions are necessary.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     finish()
                     return
                 }

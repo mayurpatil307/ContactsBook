@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.CircleCropTransformation
 import com.example.contactsbook.databinding.ItemContactBinding
 import com.example.contactsbook.models.Contact
 
@@ -51,7 +52,9 @@ class ContactsListAdapter(private var values: MutableList<Contact>) :
             binding.contactNumberTextView.text = item.phoneNumber
 
             if (item.photoUri != null) {
-                binding.contactImageView.load(Uri.parse(item.photoUri))
+                binding.contactImageView.load(Uri.parse(item.photoUri)){
+                    transformations(CircleCropTransformation())
+                }
             }
 
             binding.root.setOnClickListener {

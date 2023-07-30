@@ -13,6 +13,8 @@ import com.example.contactsbook.models.CallLogItem
 class MissedCallsAdapter :
     ListAdapter<CallLogItem, MissedCallsAdapter.ViewHolder>(MissedCallsDiffCallback()) {
 
+    var onItemClick: ((CallLogItem) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemIncomingCallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,6 +33,9 @@ class MissedCallsAdapter :
             binding.callerNameTextView.text = item.callerName ?: "Unknown"
             binding.callerNumberTextView.text = item.callerNumber
             binding.callTypeImageView.setImageResource(R.drawable.ic_missed_call)
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
+            }
         }
     }
 

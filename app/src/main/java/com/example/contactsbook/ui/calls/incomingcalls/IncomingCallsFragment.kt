@@ -1,7 +1,9 @@
 package com.example.contactsbook.ui.calls.incomingcalls
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsbook.databinding.FragmentIncomingCallsListBinding
+import com.example.contactsbook.models.CallLogItem
 
 class IncomingCallsFragment : Fragment() {
 
@@ -30,7 +33,9 @@ class IncomingCallsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         incomingCallsListAdapter = IncomingCallsListAdapter()
-
+        incomingCallsListAdapter.onItemClick = { callLogItem ->
+            showDialer(callLogItem)
+        }
         binding.list.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = incomingCallsListAdapter
@@ -64,6 +69,13 @@ class IncomingCallsFragment : Fragment() {
                 viewModel.fetchIncomingCalls(requireContext())
             }
         }
+    }
+
+    private fun showDialer(callLogItem: CallLogItem) {
+        val phoneNumber = callLogItem.callerNumber
+        val dialIntent = Intent(Intent.ACTION_DIAL)
+        dialIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(dialIntent)
     }
 
     companion object {

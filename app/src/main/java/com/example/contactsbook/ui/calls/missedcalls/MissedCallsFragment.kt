@@ -1,7 +1,9 @@
 package com.example.contactsbook.ui.calls.missedcalls
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.example.contactsbook.databinding.FragmentMissedCallsListBinding
+import com.example.contactsbook.models.CallLogItem
 
 class MissedCallsFragment : Fragment() {
 
@@ -30,6 +33,9 @@ class MissedCallsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         missedCallsAdapter = MissedCallsAdapter()
+        missedCallsAdapter.onItemClick = { callLogItem ->
+            showDialer(callLogItem)
+        }
 
         binding.list.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -64,6 +70,13 @@ class MissedCallsFragment : Fragment() {
                 viewModel.fetchMissedCallsList(requireContext())
             }
         }
+    }
+
+    private fun showDialer(callLogItem: CallLogItem) {
+        val phoneNumber = callLogItem.callerNumber
+        val dialIntent = Intent(Intent.ACTION_DIAL)
+        dialIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(dialIntent)
     }
 
     companion object {

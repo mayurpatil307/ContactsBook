@@ -12,6 +12,8 @@ import com.example.contactsbook.models.CallLogItem
 class OutgoingCallsAdapter :
     ListAdapter<CallLogItem, OutgoingCallsAdapter.ViewHolder>(IncomingCallsDiffCallback()) {
 
+    var onItemClick: ((CallLogItem) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemIncomingCallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,6 +32,9 @@ class OutgoingCallsAdapter :
             binding.callerNameTextView.text = item.callerName ?: "Unknown"
             binding.callerNumberTextView.text = item.callerNumber
             binding.callTypeImageView.setImageResource(R.drawable.ic_outgoing_call)
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
+            }
         }
     }
 

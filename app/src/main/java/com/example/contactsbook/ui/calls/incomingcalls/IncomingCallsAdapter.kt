@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.ItemIncomingCallBinding
 import com.example.contactsbook.models.CallLogItem
+import com.example.contactsbook.models.Contact
 
 class IncomingCallsListAdapter :
     ListAdapter<CallLogItem, IncomingCallsListAdapter.ViewHolder>(IncomingCallsDiffCallback()) {
+
+    var onItemClick: ((CallLogItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -30,6 +33,9 @@ class IncomingCallsListAdapter :
             binding.callerNameTextView.text = item.callerName ?: "Unknown"
             binding.callerNumberTextView.text = item.callerNumber
             binding.callTypeImageView.setImageResource(R.drawable.ic_incoming_call)
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
+            }
         }
     }
 

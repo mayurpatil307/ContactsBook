@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "677170669927",
+    "project_id": "simple-contacts-book",
+    "storage_bucket": "simple-contacts-book.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677170669927:android:e1dcdad10a5e040de0a7c2",
+        "android_client_info": {
+          "package_name": "com.example.contactsbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677170669927-bggqnfi1jp29il6ejgbv5norok7qsb39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWSkJQVmr4XXNfo5GooBUWAv0O7Ct8YDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677170669927-bggqnfi1jp29il6ejgbv5norok7qsb39.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

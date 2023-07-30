@@ -20,8 +20,7 @@ Contacts, call log, and SMS are fetched from the device itself (not with static 
 Runtime permissions are requested on application launch.
 The app uses clean code and follows the MVVM architecture pattern.
 LiveData, Kotlin Flow and Kotlin Coroutines are used for efficient data handling.
-The Swipe to Refresh feature allows users to fetch new data from the device for contacts, call log, and SMS.
-Components Used
+The Swipe to Refresh feature allows users to fetch new data from the device for contacts, call log, and SMS
 
 
 The app incorporates the following components:

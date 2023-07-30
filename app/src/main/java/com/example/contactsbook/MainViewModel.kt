@@ -3,6 +3,10 @@ package com.example.contactsbook
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -10,13 +14,21 @@ class MainViewModel : ViewModel() {
     val isPermissionsGranted: LiveData<Boolean>
         get() = _isPermissionsGranted
 
+    private val _refreshEventSharedFlow = MutableSharedFlow<Boolean>()
+    val refreshEventSharedFlow: SharedFlow<Boolean>
+        get() = _refreshEventSharedFlow
+
     init {
-        // Initialize the LiveData with a default value (false)
         _isPermissionsGranted.value = false
     }
 
     fun updatePermissionStatus(isGranted: Boolean) {
-        // Update the LiveData with the permission status
         _isPermissionsGranted.value = isGranted
+    }
+
+    fun emitRefreshEvent(isRefresh: Boolean) {
+        viewModelScope.launch {
+            _refreshEventSharedFlow.emit(isRefresh)
+        }
     }
 }

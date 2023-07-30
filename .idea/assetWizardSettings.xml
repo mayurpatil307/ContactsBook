@@ -318,7 +318,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/call_missed/baseline_call_missed_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/refresh/baseline_refresh_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -328,8 +328,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="070707" />
-                            <entry key="outputName" value="ic_missed_call" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_refresh_white" />
                           </map>
                         </option>
                       </PersistentState>

@@ -12,19 +12,26 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsbook.MainActivity
+import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentSmsInboxListBinding
 import com.example.contactsbook.extensions.isPermissionIsGranted
 import com.example.contactsbook.extensions.toPresentableTime
 import com.example.contactsbook.models.SMSMessage
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SmsInboxFragment : Fragment(), SmsItemClickListener {
     private lateinit var viewModel: SmsViewModel
     private lateinit var smsListAdapter: SmsListAdapter
     private lateinit var binding: FragmentSmsInboxListBinding
+
+    private val parentViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +60,7 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
         }
 
         binding.swipeRefreshSms.setOnRefreshListener {
+            Toast.makeText(requireContext(), "Data Refreshed", Toast.LENGTH_SHORT).show()
             binding.swipeRefreshSms.isRefreshing = true
             viewModel.loadSMSMessages()
         }
@@ -66,6 +74,13 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
                 "Read Permissions for SMS has not been granted by the user.",
                 Toast.LENGTH_LONG
             ).show()
+        }
+
+        lifecycleScope.launch {
+            parentViewModel.refreshEventSharedFlow.collectLatest {
+                binding.swipeRefreshSms.isRefreshing = true
+                viewModel.loadSMSMessages()
+            }
         }
 
         saveLastVisitedItemId(R.id.nav_sms_inbox)

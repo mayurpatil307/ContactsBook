@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.contactsbook.MainActivity
 import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.R
@@ -23,6 +24,9 @@ import com.example.contactsbook.extensions.isPermissionIsGranted
 import com.example.contactsbook.extensions.registerRequestLauncher
 import com.example.contactsbook.models.Contact
 import com.example.contactsbook.ui.contacts.localcontacts.placeholder.PlaceholderContent
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 class LocalContactsFragment : Fragment() {
     private lateinit var viewModel: ContactsViewModel
     private lateinit var contactsListAdapter: ContactsListAdapter
@@ -59,6 +63,7 @@ class LocalContactsFragment : Fragment() {
         }
 
         binding.swipeRefreshContacts.setOnRefreshListener {
+            Toast.makeText(requireContext(), "Data Refreshed", Toast.LENGTH_SHORT).show()
             binding.swipeRefreshContacts.isRefreshing = true
             viewModel.loadContacts()
         }
@@ -74,6 +79,14 @@ class LocalContactsFragment : Fragment() {
     private fun initObservers() {
         parentViewModel.isPermissionsGranted.observe(viewLifecycleOwner){
             if (it){
+                binding.swipeRefreshContacts.isRefreshing = true
+                viewModel.loadContacts()
+            }
+        }
+
+        lifecycleScope.launch {
+            parentViewModel.refreshEventSharedFlow.collectLatest {
+                binding.swipeRefreshContacts.isRefreshing = true
                 viewModel.loadContacts()
             }
         }

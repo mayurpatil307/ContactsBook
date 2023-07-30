@@ -10,16 +10,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.databinding.FragmentOutgoingCallsListBinding
 import com.example.contactsbook.models.CallLogItem
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class OutgoingCallsFragment : Fragment() {
 
     private lateinit var binding: FragmentOutgoingCallsListBinding
     private lateinit var outgoingCallsAdapter: OutgoingCallsAdapter
     private val viewModel: OutgoingCallsViewModel by viewModels()
+
+    private val parentViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +56,7 @@ class OutgoingCallsFragment : Fragment() {
         }
 
         binding.swipeRefreshOutgoing.setOnRefreshListener {
+            Toast.makeText(requireContext(), "Data Refreshed", Toast.LENGTH_SHORT).show()
             binding.swipeRefreshOutgoing.isRefreshing = true
             viewModel.fetchOutgoingCallsList()
         }
@@ -64,6 +73,13 @@ class OutgoingCallsFragment : Fragment() {
                 arrayOf(Manifest.permission.READ_CALL_LOG),
                 PERMISSION_REQUEST_CODE
             )
+        }
+
+        lifecycleScope.launch {
+            parentViewModel.refreshEventSharedFlow.collectLatest {
+                binding.swipeRefreshOutgoing.isRefreshing = true
+                viewModel.fetchOutgoingCallsList()
+            }
         }
     }
 

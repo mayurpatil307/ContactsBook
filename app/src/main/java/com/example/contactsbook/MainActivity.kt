@@ -51,6 +51,11 @@ class MainActivity : AppCompatActivity(){
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
+        binding.appBarMain.ivRefresh.setOnClickListener {
+            Toast.makeText(this, "Data Refreshed", Toast.LENGTH_SHORT).show()
+            viewModel.emitRefreshEvent(true)
+        }
+
         // Check if there is a stored last visited item
         val lastVisitedItemId = getLastVisitedItemId()
         if (lastVisitedItemId != R.id.nav_contacts) {

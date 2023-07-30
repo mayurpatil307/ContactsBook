@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Contacts Book App"
+                android:text="@string/contacts_book"
                 android:textSize="20sp"
                 android:textColor="@color/white"
                 android:textStyle="bold"

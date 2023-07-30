@@ -48,10 +48,17 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
         }
 
         viewModel.smsList.observe(viewLifecycleOwner) { messages ->
+            binding.swipeRefreshSms.isRefreshing = false
             smsListAdapter.submitList(messages)
         }
 
+        binding.swipeRefreshSms.setOnRefreshListener {
+            binding.swipeRefreshSms.isRefreshing = true
+            viewModel.loadSMSMessages()
+        }
+
         if (isReadSmsAllowed) {
+            binding.swipeRefreshSms.isRefreshing = true
             viewModel.loadSMSMessages()
         } else {
             Toast.makeText(
@@ -67,7 +74,6 @@ class SmsInboxFragment : Fragment(), SmsItemClickListener {
     private fun saveLastVisitedItemId(itemId: Int) {
         val sharedPrefs = requireActivity().getSharedPreferences("last_visited", Context.MODE_PRIVATE)
         sharedPrefs.edit().putInt("last_visited_item_id", itemId).apply()
-        Log.d("TAGGU", "nav_sms_inbox: $itemId")
     }
 
     override fun onSmsItemClick(item: SMSMessage) {

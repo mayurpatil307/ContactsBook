@@ -43,7 +43,13 @@ class MissedCallsFragment : Fragment() {
         }
 
         viewModel.missedCallsList.observe(viewLifecycleOwner) { missedCalls ->
+            binding.swipeRefreshMissed.isRefreshing = false
             missedCallsAdapter.submitList(missedCalls.toMutableList())
+        }
+
+        binding.swipeRefreshMissed.setOnRefreshListener {
+            binding.swipeRefreshMissed.isRefreshing = true
+            viewModel.fetchMissedCallsList()
         }
 
         if (ContextCompat.checkSelfPermission(
@@ -51,7 +57,8 @@ class MissedCallsFragment : Fragment() {
                 Manifest.permission.READ_CALL_LOG
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            viewModel.fetchMissedCallsList(requireContext())
+            binding.swipeRefreshMissed.isRefreshing = true
+            viewModel.fetchMissedCallsList()
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.READ_CALL_LOG),
@@ -67,7 +74,8 @@ class MissedCallsFragment : Fragment() {
     ) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                viewModel.fetchMissedCallsList(requireContext())
+                binding.swipeRefreshMissed.isRefreshing = true
+                viewModel.fetchMissedCallsList()
             }
         }
     }

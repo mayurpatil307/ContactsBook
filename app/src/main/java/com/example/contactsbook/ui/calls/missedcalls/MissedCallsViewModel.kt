@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.contactsbook.App
 import com.example.contactsbook.models.CallLogItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,14 +18,14 @@ class MissedCallsViewModel : ViewModel() {
     private val _missedCallsList = MutableLiveData<List<CallLogItem>>()
     val missedCallsList: LiveData<List<CallLogItem>> get() = _missedCallsList
 
-    fun fetchMissedCallsList(context: Context) {
+    fun fetchMissedCallsList() {
         viewModelScope.launch {
-            val incomingCalls = getMissedCalls(context)
+            val incomingCalls = getMissedCalls()
             _missedCallsList.value = incomingCalls
         }
     }
 
-    private suspend fun getMissedCalls(context: Context): List<CallLogItem> {
+    private suspend fun getMissedCalls(): List<CallLogItem> {
         return withContext(Dispatchers.IO) {
             val projection = arrayOf(
                 CallLog.Calls.CACHED_NAME,
@@ -36,7 +37,7 @@ class MissedCallsViewModel : ViewModel() {
 
             val sortOrder = "${CallLog.Calls.DATE} DESC"
 
-            val cursor: Cursor? = context.contentResolver.query(
+            val cursor: Cursor? = App.instance.contentResolver.query(
                 CallLog.Calls.CONTENT_URI,
                 projection,
                 selection,

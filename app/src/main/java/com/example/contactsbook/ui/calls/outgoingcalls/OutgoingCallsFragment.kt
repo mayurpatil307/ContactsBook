@@ -43,7 +43,13 @@ class OutgoingCallsFragment : Fragment() {
         }
 
         viewModel.outgoingCallsList.observe(viewLifecycleOwner) { outgoingCalls ->
+            binding.swipeRefreshOutgoing.isRefreshing = false
             outgoingCallsAdapter.submitList(outgoingCalls.toMutableList())
+        }
+
+        binding.swipeRefreshOutgoing.setOnRefreshListener {
+            binding.swipeRefreshOutgoing.isRefreshing = true
+            viewModel.fetchOutgoingCallsList()
         }
 
         if (ContextCompat.checkSelfPermission(
@@ -51,7 +57,8 @@ class OutgoingCallsFragment : Fragment() {
                 Manifest.permission.READ_CALL_LOG
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            viewModel.fetchOutgoingCallsList(requireContext())
+            binding.swipeRefreshOutgoing.isRefreshing = true
+            viewModel.fetchOutgoingCallsList()
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.READ_CALL_LOG),
@@ -67,7 +74,8 @@ class OutgoingCallsFragment : Fragment() {
     ) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                viewModel.fetchOutgoingCallsList(requireContext())
+                binding.swipeRefreshOutgoing.isRefreshing = true
+                viewModel.fetchOutgoingCallsList()
             }
         }
     }

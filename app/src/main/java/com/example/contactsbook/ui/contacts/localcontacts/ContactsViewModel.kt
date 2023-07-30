@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.contactsbook.App
 import com.example.contactsbook.models.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,18 +18,18 @@ class ContactsViewModel : ViewModel() {
     private val _contactsList = MutableLiveData<List<Contact>>()
     val contactsList: LiveData<List<Contact>> get() = _contactsList
 
-    fun loadContacts(context: Context) {
+    fun loadContacts() {
         viewModelScope.launch {
-            val contacts = fetchContacts(context)
+            val contacts = fetchContacts()
             withContext(Dispatchers.Main) {
                 _contactsList.value = contacts
             }
         }
     }
 
-    private fun fetchContacts(context: Context): List<Contact> {
+    private fun fetchContacts(): List<Contact> {
         val contacts = mutableListOf<Contact>()
-        val contentResolver = context.contentResolver
+        val contentResolver = App.instance.contentResolver
         val projection = arrayOf(
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Phone.NUMBER,

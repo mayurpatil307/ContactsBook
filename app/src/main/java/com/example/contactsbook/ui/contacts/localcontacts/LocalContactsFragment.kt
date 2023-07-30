@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
@@ -53,11 +54,18 @@ class LocalContactsFragment : Fragment() {
         }
 
         viewModel.contactsList.observe(viewLifecycleOwner) { contacts ->
+            binding.swipeRefreshContacts.isRefreshing = false
             contactsListAdapter.updateData(contacts.toMutableList())
         }
 
+        binding.swipeRefreshContacts.setOnRefreshListener {
+            binding.swipeRefreshContacts.isRefreshing = true
+            viewModel.loadContacts()
+        }
+
         if((requireActivity() as MainActivity).isPermissionIsGranted(Manifest.permission.READ_CONTACTS)){
-            viewModel.loadContacts(requireContext())
+            binding.swipeRefreshContacts.isRefreshing = true
+            viewModel.loadContacts()
         }
 
         initObservers()
@@ -66,7 +74,7 @@ class LocalContactsFragment : Fragment() {
     private fun initObservers() {
         parentViewModel.isPermissionsGranted.observe(viewLifecycleOwner){
             if (it){
-                viewModel.loadContacts(requireContext())
+                viewModel.loadContacts()
             }
         }
     }

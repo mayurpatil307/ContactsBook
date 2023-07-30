@@ -1,12 +1,12 @@
 package com.example.contactsbook.ui.calls.incomingcalls
 
-import android.content.Context
 import android.database.Cursor
 import android.provider.CallLog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.contactsbook.App
 import com.example.contactsbook.models.CallLogItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,14 +17,14 @@ class IncomingCallsViewModel : ViewModel() {
     private val _incomingCallsList = MutableLiveData<List<CallLogItem>>()
     val incomingCallsList: LiveData<List<CallLogItem>> get() = _incomingCallsList
 
-    fun fetchIncomingCalls(context: Context) {
+    fun fetchIncomingCalls() {
         viewModelScope.launch {
-            val incomingCalls = getIncomingCalls(context)
+            val incomingCalls = getIncomingCalls()
             _incomingCallsList.value = incomingCalls
         }
     }
 
-    private suspend fun getIncomingCalls(context: Context): List<CallLogItem> {
+    private suspend fun getIncomingCalls(): List<CallLogItem> {
         return withContext(Dispatchers.IO) {
             val projection = arrayOf(
                 CallLog.Calls.CACHED_NAME,
@@ -36,7 +36,7 @@ class IncomingCallsViewModel : ViewModel() {
 
             val sortOrder = "${CallLog.Calls.DATE} DESC"
 
-            val cursor: Cursor? = context.contentResolver.query(
+            val cursor: Cursor? = App.instance.contentResolver.query(
                 CallLog.Calls.CONTENT_URI,
                 projection,
                 selection,

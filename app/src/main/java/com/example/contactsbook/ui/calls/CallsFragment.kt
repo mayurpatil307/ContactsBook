@@ -28,9 +28,6 @@ class CallsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val callsViewModel =
-            ViewModelProvider(this).get(CallsViewModel::class.java)
-
         _binding = FragmentCallsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 

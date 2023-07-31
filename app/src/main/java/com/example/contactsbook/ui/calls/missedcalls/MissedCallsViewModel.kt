@@ -1,6 +1,5 @@
 package com.example.contactsbook.ui.calls.missedcalls
 
-import android.content.Context
 import android.database.Cursor
 import android.provider.CallLog
 import androidx.lifecycle.LiveData
@@ -20,8 +19,8 @@ class MissedCallsViewModel : ViewModel() {
 
     fun fetchMissedCallsList() {
         viewModelScope.launch {
-            val incomingCalls = getMissedCalls()
-            _missedCallsList.value = incomingCalls
+            val calls = getMissedCalls()
+            _missedCallsList.value = calls
         }
     }
 

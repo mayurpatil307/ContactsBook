@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/nav_contacts"
         android:name="com.example.contactsbook.ui.contacts.ContactsFragment"
-        android:label="@string/menu_contacts"
+        android:label=""
         tools:layout="@layout/fragment_contacts" />
 
     <fragment
         android:id="@+id/nav_call_logs"
         android:name="com.example.contactsbook.ui.calls.CallsFragment"
-        android:label="@string/menu_calls"
+        android:label=""
         tools:layout="@layout/fragment_calls" />
 
     <fragment
         android:id="@+id/nav_sms_inbox"
         android:name="com.example.contactsbook.ui.sms.SmsInboxFragment"
-        android:label="@string/menu_sms_inbox"
+        android:label=""
         tools:layout="@layout/fragment_sms_inbox" />
 </navigation>

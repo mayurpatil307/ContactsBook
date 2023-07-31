@@ -1,6 +1,5 @@
 package com.example.contactsbook.ui.calls.outgoingcalls
 
-import android.content.Context
 import android.database.Cursor
 import android.provider.CallLog
 import androidx.lifecycle.LiveData
@@ -21,8 +20,8 @@ class OutgoingCallsViewModel : ViewModel() {
 
     fun fetchOutgoingCallsList() {
         viewModelScope.launch {
-            val incomingCalls = getOutgoingCalls()
-            _outgoingCallsList.value = incomingCalls
+            val calls = getOutgoingCalls()
+            _outgoingCallsList.value = calls
         }
     }
 

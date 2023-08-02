@@ -1,14 +1,14 @@
 package com.example.contactsbook.ui.contacts
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentContactsBinding
 import com.example.contactsbook.ui.common.ViewPagerAdapter
@@ -21,6 +21,9 @@ class ContactsFragment : Fragment() {
     private var _binding: FragmentContactsBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,7 +39,6 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setViewPagerAdapter()
-        saveLastVisitedItemId(R.id.nav_contacts)
     }
 
     private fun setViewPagerAdapter() {
@@ -50,10 +52,8 @@ class ContactsFragment : Fragment() {
         binding.viewpagerContacts.isUserInputEnabled = false
         binding.viewpagerContacts.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
         })
+        
         TabLayoutMediator(
             binding.contactsTabLayout,
             binding.viewpagerContacts
@@ -61,17 +61,12 @@ class ContactsFragment : Fragment() {
             if (position == POSITION_ZERO) tab.text = LOCAL_CONTACTS_STRING
             else if (position == POSITION_ONE) tab.text = GOOGLE_CONTACTS_STRING
         }.attach()
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun saveLastVisitedItemId(itemId: Int) {
-        val sharedPrefs = requireActivity().getSharedPreferences("last_visited", Context.MODE_PRIVATE)
-        sharedPrefs.edit().putInt("last_visited_item_id", itemId).apply()
-        Log.d("TAGGU", "saving contacts: $itemId")
     }
 
     companion object {

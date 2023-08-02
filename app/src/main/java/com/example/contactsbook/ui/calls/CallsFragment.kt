@@ -1,14 +1,13 @@
 package com.example.contactsbook.ui.calls
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
+import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.R
 import com.example.contactsbook.databinding.FragmentCallsBinding
 import com.example.contactsbook.ui.calls.incomingcalls.IncomingCallsFragment
@@ -22,6 +21,8 @@ class CallsFragment : Fragment() {
     private var _binding: FragmentCallsBinding? = null
 
     private val binding get() = _binding!!
+
+    private val parentViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +38,7 @@ class CallsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setViewPagerAdapter()
-        saveLastVisitedItemId(R.id.nav_call_logs)
+        parentViewModel.saveLastVisitedItemId(R.id.nav_call_logs)
     }
 
     private fun setViewPagerAdapter() {
@@ -52,9 +53,6 @@ class CallsFragment : Fragment() {
         binding.viewpagerCalls.isUserInputEnabled = false
         binding.viewpagerCalls.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
         })
         TabLayoutMediator(
             binding.callsTabLayout,
@@ -69,12 +67,6 @@ class CallsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun saveLastVisitedItemId(itemId: Int) {
-        val sharedPrefs = requireActivity().getSharedPreferences("last_visited", Context.MODE_PRIVATE)
-        sharedPrefs.edit().putInt("last_visited_item_id", itemId).apply()
-        Log.d("TAGGU", "calls: $itemId")
     }
 
     companion object {

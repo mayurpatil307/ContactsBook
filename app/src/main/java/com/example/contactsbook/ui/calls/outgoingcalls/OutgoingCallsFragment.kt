@@ -2,21 +2,21 @@ package com.example.contactsbook.ui.calls.outgoingcalls
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.contactsbook.MainActivity
 import com.example.contactsbook.MainViewModel
 import com.example.contactsbook.databinding.FragmentOutgoingCallsListBinding
+import com.example.contactsbook.extensions.isPermissionIsGranted
 import com.example.contactsbook.models.CallLogItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -56,23 +56,9 @@ class OutgoingCallsFragment : Fragment() {
         }
 
         binding.swipeRefreshOutgoing.setOnRefreshListener {
-            Toast.makeText(requireContext(), "Data Refreshed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), TOAST_DATA_REFRESHED, Toast.LENGTH_SHORT).show()
             binding.swipeRefreshOutgoing.isRefreshing = true
             viewModel.fetchOutgoingCallsList()
-        }
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_CALL_LOG
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            binding.swipeRefreshOutgoing.isRefreshing = true
-            viewModel.fetchOutgoingCallsList()
-        } else {
-            requestPermissions(
-                arrayOf(Manifest.permission.READ_CALL_LOG),
-                PERMISSION_REQUEST_CODE
-            )
         }
 
         lifecycleScope.launch {
@@ -81,19 +67,19 @@ class OutgoingCallsFragment : Fragment() {
                 viewModel.fetchOutgoingCallsList()
             }
         }
-    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                binding.swipeRefreshOutgoing.isRefreshing = true
-                viewModel.fetchOutgoingCallsList()
+        lifecycleScope.launch {
+            parentViewModel.permissionLiveEvent.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.swipeRefreshOutgoing.isRefreshing = true
+                    viewModel.fetchOutgoingCallsList()
+                } else {
+                    parentViewModel.emitToastEvent(TOAST_CALL_LOGS)
+                }
             }
         }
+
+        checkCallsPermission()
     }
 
     private fun showDialer(callLogItem: CallLogItem) {
@@ -103,7 +89,18 @@ class OutgoingCallsFragment : Fragment() {
         startActivity(dialIntent)
     }
 
+    private fun checkCallsPermission() {
+        if ((requireActivity() as MainActivity).isPermissionIsGranted(Manifest.permission.READ_CALL_LOG)) {
+            binding.swipeRefreshOutgoing.isRefreshing = true
+            viewModel.fetchOutgoingCallsList()
+        } else {
+            (requireActivity() as MainActivity).getActivityRequestLauncher()
+                .launch(Manifest.permission.READ_CALL_LOG)
+        }
+    }
+
     companion object {
-        private const val PERMISSION_REQUEST_CODE = 1003
+        const val TOAST_CALL_LOGS = "Reading Call Logs Permission is denied by user"
+        const val TOAST_DATA_REFRESHED = "Data Refreshed"
     }
 }

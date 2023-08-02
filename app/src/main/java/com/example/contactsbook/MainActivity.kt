@@ -1,16 +1,12 @@
 package com.example.contactsbook
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,19 +14,17 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.contactsbook.databinding.ActivityMainBinding
-import com.example.contactsbook.extensions.isPermissionIsGranted
+import com.example.contactsbook.extensions.registerRequestLauncher
 import com.google.android.material.navigation.NavigationView
 
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    private val smsPermission = Manifest.permission.READ_SMS
-    private val contactPermission = Manifest.permission.READ_CONTACTS
-    private val callLogsPermission = Manifest.permission.READ_CALL_LOG
+    private lateinit var activityRequestLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,21 +50,20 @@ class MainActivity : AppCompatActivity(){
             viewModel.emitRefreshEvent(true)
         }
 
-        // Check if there is a stored last visited item
-        val lastVisitedItemId = getLastVisitedItemId()
-        if (lastVisitedItemId != R.id.nav_contacts) {
-            navController.navigate(lastVisitedItemId)
-        } else {
-            //default -> contacts
-            navController.navigate(R.id.nav_contacts)
+        binding.navView.setNavigationItemSelectedListener(this)
+
+        activityRequestLauncher = registerRequestLauncher {
+            viewModel.updatePermissionResult(it)
         }
 
-        requestPermissions()
-    }
+        viewModel.showToastEvent.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
 
-    private fun getLastVisitedItemId(): Int {
-        val sharedPrefs = getSharedPreferences("last_visited", Context.MODE_PRIVATE)
-        return sharedPrefs.getInt("last_visited_item_id", R.id.nav_contacts)
+        val lastVisitedItemId = viewModel.getLastVisitedItemId()
+        if (R.id.nav_contacts != lastVisitedItemId) findNavController(R.id.nav_host_fragment_content_main).navigate(
+            lastVisitedItemId
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -78,54 +71,27 @@ class MainActivity : AppCompatActivity(){
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun requestPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-        if (!isPermissionIsGranted(smsPermission)) {
-            permissionsToRequest.add(smsPermission)
-        }
-        if (!isPermissionIsGranted(contactPermission)) {
-            permissionsToRequest.add(contactPermission)
-        }
-
-        if (!isPermissionIsGranted(callLogsPermission)) {
-            permissionsToRequest.add(callLogsPermission)
-        }
-
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toTypedArray(),
-                PERMISSION_REQUEST_CODE
-            )
-        }
+    fun getActivityRequestLauncher(): ActivityResultLauncher<String> {
+        return activityRequestLauncher
     }
 
-    // Handle the result of the permission request
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            for (result in grantResults) {
-                if (result == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(
-                        this,
-                        "Closing the app, since the permissions are necessary.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                    return
-                }
-            }
-
-            viewModel.updatePermissionStatus(true)
-
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        if (item.title?.equals(CONTACTS) == true) {
+            navController.navigate(R.id.nav_contacts)
+        } else if (item.title?.equals(CALL_LOGS) == true) {
+            navController.navigate(R.id.nav_call_logs)
+        } else if (item.title?.equals(SMS) == true) {
+            navController.navigate(R.id.nav_sms_inbox)
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        return true
     }
 
     companion object {
-        private const val PERMISSION_REQUEST_CODE = 1001
+        val CONTACTS = "Contacts"
+        val CALL_LOGS = "Call Logs"
+        val SMS = "SMS Inbox"
     }
+
 }

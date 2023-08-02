@@ -18,4 +18,5 @@
     <string name="contacts_book">Contacts Book</string>
     <string name="clientID">677170669927-9lbb2v86kgj72oclndb3uasu553s9grt.apps.googleusercontent.com</string>
     <string name="clientSecret">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</string>
+    <string name="sign_in">Sign In</string>
 </resources>

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class LocalContactsFragment : Fragment() {
-    private lateinit var viewModel: ContactsViewModel
+    private val viewModel: ContactsViewModel by viewModels()
     private lateinit var contactsListAdapter: ContactsListAdapter
     private lateinit var binding: FragmentLocalContactsListBinding
 
@@ -31,7 +32,6 @@ class LocalContactsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this).get(ContactsViewModel::class.java)
         binding = FragmentLocalContactsListBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.contactsbook.App
+import com.example.contactsbook.helpers.CallLogsHelper
 import com.example.contactsbook.models.CallLogItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -19,45 +21,8 @@ class IncomingCallsViewModel : ViewModel() {
 
     fun fetchIncomingCalls() {
         viewModelScope.launch {
-            val incomingCalls = getIncomingCalls()
-            _incomingCallsList.value = incomingCalls
-        }
-    }
-
-    private suspend fun getIncomingCalls(): List<CallLogItem> {
-        return withContext(Dispatchers.IO) {
-            val projection = arrayOf(
-                CallLog.Calls.CACHED_NAME,
-                CallLog.Calls.NUMBER
-            )
-
-            val selection = "${CallLog.Calls.TYPE} = ?"
-            val selectionArgs = arrayOf("${CallLog.Calls.INCOMING_TYPE}")
-
-            val sortOrder = "${CallLog.Calls.DATE} DESC"
-
-            val cursor: Cursor? = App.instance.contentResolver.query(
-                CallLog.Calls.CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                sortOrder
-            )
-
-            val incomingCallsList = mutableListOf<CallLogItem>()
-            cursor?.use { c ->
-                val nameColumn = c.getColumnIndex(CallLog.Calls.CACHED_NAME)
-                val numberColumn = c.getColumnIndex(CallLog.Calls.NUMBER)
-
-                while (c.moveToNext()) {
-                    val name = c.getString(nameColumn)
-                    val number = c.getString(numberColumn)
-                    incomingCallsList.add(CallLogItem(name, number, CallLogItem.CallType.INCOMING))
-                }
-            }
-
-            cursor?.close()
-            incomingCallsList
+            val incomingCalls = async { CallLogsHelper.getCallLogs(CallLog.Calls.INCOMING_TYPE) }
+            _incomingCallsList.value = incomingCalls.await()
         }
     }
 }
